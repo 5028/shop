@@ -1,0 +1,100 @@
+{include file="header"}
+<section class="Hui-article-box">
+<nav class="breadcrumb"><i class="Hui-iconfont">&#xe67f;</i> 首页 <span class="c-gray en">&gt;</span> 产品管理 <span class="c-gray en">&gt;</span> 产品列表图片添加&nbsp;&nbsp;&nbsp;&nbsp;<a href="{:url('product/product')}" ><i class="Hui-iconfont">&#xe66b;</i>返回</a><a class="btn btn-success radius r" style="line-height:1.6em;margin-top:3px" href="javascript:location.replace(location.href);" title="刷新" ><i class="Hui-iconfont">&#xe68f;</i></a></nav>
+<div class="cl pd-5 bg-1 bk-gray mt-20">
+	<div class="mt-20">
+		<div style="text-align: center;">
+			<input type="hidden" name="" id="id" value="{$id}">
+			<input type="file" name="" id="file" multiple="multiple">
+			<button id="addaction" value="添加">添加</button>
+		</div>
+		<br>
+		<table class="table table-border table-bordered table-bg table-hover table-sort">
+			<thead>
+				<tr class="text-c">
+					<th width="40">ID</th>
+					<th width="100">产品名称</th>
+					<th width="100">大图</th>
+					<th width="100">中图</th>
+					<th width="100">小图</th>
+					<th width="100">操作</th>
+				</tr>
+			</thead>
+			<tbody>
+				
+			</tbody>
+		</table>
+	</div>
+</div>
+</section>
+{include file="footer"}
+<script type="text/javascript">
+	function show() {
+		var id=$('#id').val();
+		var tr=''
+		$.ajax({
+			url:"{:url('product/img_show')}",
+			data:{
+           		id:id,
+       		},
+       		type:'post',
+			dataType:'json',
+			success:function (res) {
+				console.log(res.data)
+				var data=res.data
+              	if (res.status=='ok') {
+	          		for (var i = 0; i < data.length; i++) {
+	          				tr=tr+"<tr class='text-c'><td>"+data[i].gimg_id+"</td><td>"+data[i].name+"</td><td class='text-l'><img style='height=100px;width=30px' src='__PUBLIC__uploads/"+data[i].big_img+"'></td><td class='text-l'><img src='__PUBLIC__uploads/"+data[i].middle_img+"'></td><td class='text-l'><img src='__PUBLIC__uploads/"+data[i].small_img+"'></td><td class='f-14 product-brand-manage'><a style='text-decoration:none' onclick='deleteaction("+data[i].gimg_id+")' title='删除'>删除&nbsp;<i class='Hui-iconfont'>&#xe6e2;</i></a></td></tr>";
+	          		}
+	          		$(".table tbody").html(tr);
+	          		
+              	}					
+			}
+
+		})
+	}
+	show()
+$('#addaction').click(function() {
+		var formData = new FormData();
+		var file=$('#file')[0].files;
+		formData.append('id',{$id});
+		for (var i = 0; i<file.length; i++) {
+		 	formData.append('file[]',file[i]);
+		}
+		$.ajax({
+	        url:"{:url('product/img_add')}",
+	        data:formData,
+	        method:'POST',
+	        contentType:false,
+	        processData:false,
+	        cache:false,
+	        success:function(res) {
+	        	console.log(res)
+	        	show();
+	        }
+		})
+});
+function deleteaction(gimg_id) {
+	$.ajax({
+			url:"{:url('product/img_delete')}",
+			data:{
+           		gimg_id:gimg_id,
+       		},
+       		type:'post',
+			dataType:'json',
+			success:function (res) {
+				console.log(res)
+				if (res.code=='10010') {
+		    		alert('删除成功')
+		    		show();
+		    	}else{
+		    		alert('删除失败')
+		    	}	
+			}
+		})
+}
+</script>
+
+
+</body>
+</html>

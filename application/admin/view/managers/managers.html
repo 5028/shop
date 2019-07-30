@@ -1,0 +1,153 @@
+{include file="header"}
+<section class="Hui-article-box">
+	<nav class="breadcrumb"><i class="Hui-iconfont">&#xe67f;</i> 首页
+		<span class="c-gray en">&gt;</span>
+		管理员管理
+		<span class="c-gray en">&gt;</span>
+		管理员列表 <a class="btn btn-success radius r" style="line-height:1.6em;margin-top:3px" href="javascript:location.replace(location.href);" title="刷新" ><i class="Hui-iconfont">&#xe68f;</i></a> </nav>
+	<div class="Hui-article">
+		<article class="cl pd-20">
+			<div class="cl pd-5 bg-1 bk-gray mt-20">
+				<span class="l"> <a href="{:url('managers/managers_add')}" class="btn btn-primary radius"><i class="Hui-iconfont">&#xe600;</i> 添加管理员</a> </span>
+				<span class="r">共有数据：<strong>54</strong> 条</span>
+			</div>
+			<table class="table table-border table-bordered table-bg">
+				<tr>
+					<th scope="col" colspan="9">员工列表</th>
+				</tr>
+				<tr class="text-c">
+					<th width="25"><input type="checkbox" name="" value=""></th>
+					<th width="40">ID</th>
+					<th width="200">登录名</th>
+					<th width="200">角色</th>
+					<th >手机号</th>
+					<th width="200">操作</th>
+				</tr>
+				<tbody id="ttbody">
+
+				</tbody>
+			</table>
+			<div id="div1" style="text-align: center;">
+	
+			</div>
+		</article>
+	</div>
+</section>
+
+{include file="footer"}
+
+<script type="text/javascript">
+function cate(id='0') {
+	var option='';
+	var tion='';
+	var op=''
+	console.log(id)
+	$.ajax({
+        url:"{:url('managers/show1')}",
+        dataType:'json',
+        success:function(res) {
+        	console.log(res)
+          	var data=res.data
+          	if (res.status=='ok') {
+          		if (id!='0') {
+          			for (var i = 0; i < data.length; i++) {
+          			if (id==data[i].id) {
+          				tion="<option value='"+data[i].id+"' selected>"+data[i].name+"</option>"
+          			}else{
+          				option=option+"<option value='"+data[i].id+"'>"+data[i].name+"</option>"
+          			}
+          			op=tion+option;
+          		}
+          	}else{
+      			for (var i = 0; i < data.length; i++) {
+      				option=option+"<option value='"+data[i].id+"'>"+data[i].name+"</option>"
+      			}
+          	}
+          		$("#cate2").html(op);
+          	}
+      	  }
+	});
+};
+	function show() {
+		var tr='';
+		$.ajax({
+			url:"{:url('managers/show')}",
+			dataType:'json',
+			success:function(res) {
+              	var data=res.data
+              	if (res.status=='ok') {
+	          		for (var i = 0; i < data.length; i++) {
+	          				tr=tr+"<tr class='text-c'><td><input name='' type='checkbox' value=''></td><td>"+data[i].u_id+"</td><td>"+data[i].u_name+"</td><td class='text-l'>"+data[i].r_name+"</td><td class='text-l'>"+data[i].u_mobile+"</td><td class='f-14 product-brand-manage'><a style='text-decoration:none'  onclick='update1("+data[i].u_id+")' title='查看详情'>查看详情<i class='Hui-iconfont'>&#xe6df;</i></a>&nbsp;&nbsp;&nbsp;&nbsp;<a style='text-decoration:none' onclick='mydelete("+data[i].u_id+")' title='删除'>删除<i class='Hui-iconfont'>&#xe6e2;</i></a></td></tr>";
+	          		}
+	          		$("#ttbody").html(tr);
+              	}
+          	  }
+		})
+	}
+	show()
+	function mydelete(id) {
+		$.ajax({
+			url:"{:url('managers/delete')}",
+			data:{
+				id:id,
+			},
+			type:'post',
+			dataType:'json',
+			success:function(res) {
+				alert(res.data)
+				show()
+			}
+		})
+	}
+	function update1(id) {
+	$.ajax({
+            url:"{:url('managers/myupdate')}",
+            data:{
+                id:id,
+            },
+            type:'post',
+            dataType:'json',
+            success:function(res) {
+            	var trr='';
+            	var data=res.data
+            	if (res.status=='ok') {
+            		trr="<input type='hidden' value='"+data[0].u_id+"' id='id2' class='input-text' style='width:150px'></br></br>                                                        用户名:<input type='text' id='name2' value='"+data[0].u_name+"' class='input-text' style='width:150px'></br></br>                                                           分类:<select id='cate2' value='"+data[0].r_name+"' style='width:150px' class='input-text'></select></br></br>手机号:<input type='text' id='mobile2' value='"+data[0].u_mobile+"' class='input-text' style='width:150px'></br></br><input type='button' onclick='update2("+data[0].u_id+")' value='确认修改' class='input-text' style='width:150px'>"
+            	$("#div1").html(trr);
+            	cate(data[0].u_id)
+            	}
+            }
+		})
+}
+//修改后的ID信息
+function update2(id) {
+	var name=$('#name2').val()
+    var role_id=$('#cate2').val()
+    var mobile=$('#mobile2').val()
+	$.ajax({
+		url:"{:url('managers/update')}",
+		data:{
+			id:id,
+			name:name,
+			role_id:role_id,
+			mobile:mobile,
+		},
+		type:'post',
+		dataType:'json',
+		success:function (res) {
+			console.log(res)
+			if (res.status=='ok') {
+				alert(res.data);
+				show()
+			}else {
+            	alert(res.data);
+            }
+		}
+	})
+	location.reload(true);
+}
+
+
+
+</script>
+</body>
+</html>

@@ -1,0 +1,174 @@
+{include file="header"}
+<section class="Hui-article-box">
+    <nav class="breadcrumb"><i class="Hui-iconfont">&#xe67f;</i> 首页 <span class="c-gray en">&gt;</span> 管理员管理 <span class="c-gray en">&gt;</span> 权限分类管理 <a class="btn btn-success radius r" style="line-height:1.6em;margin-top:3px" href="javascript:location.replace(location.href);" title="刷新" ><i class="Hui-iconfont">&#xe68f;</i></a></nav>
+    <div class="Hui-article">
+        <article class="cl pd-20">
+            <div class="text-c">
+                <input type="text" class="input-text" style="width:250px" placeholder="权限名称" id="quanxian" name="">
+                <input type="text" class="input-text" style="width:250px" placeholder="描述" id="description">
+                <button type="submit" class="btn btn-success radius" id="admin-role-save"><i class="icon-ok"></i>添加权限节点</button>
+            </div>
+            <!-- <div class="cl pd-5 bg-1 bk-gray mt-20"> <span class="l"><a href="javascript:;" onclick="datadel()" class="btn btn-danger radius"><i class="Hui-iconfont">&#xe6e2;</i> 批量删除</a> <a href="javascript:;" onclick="admin_permission_add('添加权限节点','admin-permission-add.html','','310')" class="btn btn-primary radius"><i class="Hui-iconfont">&#xe600;</i> 添加权限节点</a></span> <span class="r">共有数据：<strong>54</strong> 条</span> </div> -->
+            <table class="table table-border table-bordered table-bg">
+                <thead>
+                    <tr>
+                        <th scope="col" colspan="7">权限分类节点</th>
+                    </tr>
+                    <tr class="text-c">
+                        <th width="25"><input type="checkbox" name="" value=""></th>
+                        <th width="40">ID</th>
+                        <th width="200">权限名称</th>
+                        <th width="200">描述</th>
+                        <th width="100">操作</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    
+                </tbody>
+            </table>
+            <br>
+            <br>
+            <div id="div1" style="text-align: center;">
+            </div>
+            
+        </article>
+        <button class="btn radius btn-primary size-L" onClick="modaldemo()">弹出对话框</button>
+        <script type="text/javascript">
+            function modaldemo(){
+                $("#modal-demo").modal("show")}
+        </script>
+    </div>
+</section>
+<div id="modal-demo" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content radius">
+                    <div class="modal-header">
+                        <h3 class="modal-title">对话框标题</h3>
+                        <a class="close" data-dismiss="modal" aria-hidden="true" href="javascript:void();">×</a>
+                    </div>
+                    <div class="modal-body">
+                        <p>对话框内容…</p>
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn btn-primary">确定</button>
+                        <button class="btn" data-dismiss="modal" aria-hidden="true">关闭</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+{include file="footer"}
+<script type="text/javascript">
+
+	function show() {
+		var tr='';
+    	$.ajax({
+            url:"{:url('permissioncate/show')}",
+            dataType:'json',
+            success:function(res) {
+              	//console.log(res.data)
+              	var data=res.data
+              	if (res.status=='ok') {
+	          		for (var i = 0; i < data.length; i++) {
+	          			tr=tr+"<tr class='text-c'><td><input name='' type='checkbox' value=''></td><td>"+data[i].id+"</td><td><img src=''>"+data[i].name+"</td><td class='text-l'><img src=''>"+data[i].	description+"</td><td class='f-14 product-brand-manage'><a style='text-decoration:none' onclick='update1("+data[i].id+")' title='编辑'>编辑<i class='Hui-iconfont'>&#xe6df;</i></a> <a style='text-decoration:none' onclick='mydelete("+data[i].id+")' title='删除'>删除<i class='Hui-iconfont'>&#xe6e2;</i></a></td></tr>";
+	          		}
+	          		$(".table tbody").html(tr);
+
+              	}
+          	  }
+		});
+	};
+	show();
+$('#admin-role-save').click(function() {
+        var name=$('#quanxian').val()
+        var description=$('#description').val()
+        // console.log(name)
+        $.ajax({
+            url:"{:url('permissioncate/addaction')}",
+            data:{
+                name:name,
+                description:description
+            },
+            type:'post',
+            dataType:'json',
+            success:function(res) {
+            	console.log(res)
+            	if (res.status=='ok') {
+            		alert('添加成功');
+            		show();
+            	}
+            	if (res.status=='error') {
+            		alert(res.data);
+            	}
+            }
+		})
+    });
+
+function mydelete(id) {
+ 	console.log('id');
+ 	$.ajax({
+            url:"{:url('permissioncate/delete')}",
+            data:{
+                id:id,
+            },
+            type:'post',
+            dataType:'json',
+            success:function(res) {
+            	console.log(res)
+            	if (res.status=='ok') {
+            		alert('删除成功');
+            		show();
+            	}
+            	else {
+            		alert('删除失败');
+            	}
+            }
+		})
+ 	show();
+ }
+
+function update1(id) {
+	console.log('id');
+	$.ajax({
+            url:"{:url('permissioncate/myupdate')}",
+            data:{
+                id:id,
+            },
+            type:'post',
+            dataType:'json',
+            success:function(res) {
+            	console.log(res)
+            	var trr='';
+            	var data=res.data
+            	if (res.status=='ok') {
+            		trr="<input type='hidden' value='"+data[0].id+"' id='id1' >用户名:<input type='text' id='name1' value='"+data[0].name+"'>备注:<input type='text' id='description1' value='"+data[0].description+"'><input type='button' onclick='update2("+data[0].id+")' value='确认修改'>"
+            	$("#div1").html(trr);
+            	}
+            }
+		})
+}
+function update2(id) {
+	var name=$('#name1').val()
+	var description=$('#description1').val()
+	$.ajax({
+		url:"{:url('permissioncate/updateaction')}",
+		data:{
+			id:id,
+			name:name,
+			description:description,
+		},
+		type:'post',
+		dataType:'json',
+		success:function (res) {
+			console.log(res)
+			if (res.status=='ok') {
+				alert(res.data);
+			}else {
+            	alert(res.data);	
+            }
+		}
+	})
+	location.reload(true);
+}
+</script>
+</body>
+</html>

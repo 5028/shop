@@ -1,0 +1,180 @@
+{include file="header"}
+
+
+<section class="Hui-article-box">
+    <nav class="breadcrumb"><i class="Hui-iconfont">&#xe67f;</i> 首页 <span class="c-gray en">&gt;</span> 产品管理 <span class="c-gray en">&gt;</span> 产品分类 <a class="btn btn-success radius r" style="line-height:1.6em;margin-top:3px" href="javascript:location.replace(location.href);" title="刷新" ><i class="Hui-iconfont">&#xe68f;</i></a></nav>
+<div class="page-container">	
+	<div class="text-c">
+			<span id="pid"></span>
+			<button onclick='deleteaction()' value='$m_id' id="delete"><i class='Hui-iconfont'>&#xe6e2;</i></button>
+			<button onclick="update1()" value='$m_id' id="update"><i class='Hui-iconfont'>&#xe692;</i></button>
+			<input type="text" placeholder="品牌名称" value="" class="input-text" style="width:120px" id="name">
+			<button type="button" class="btn btn-success" id="add"><i class="Hui-iconfont">&#xe600;</i> 添加</button>
+	</div>
+</div>
+<div id="mytree"></div>
+<div id="div1" style="text-align: center;width: 100px;height: 100px;"></div>
+
+{include file="footer"}
+<script type="text/javascript">
+	function show() {
+		$.ajax({
+			url:"{:url('category/show')}",
+			success:function (res) {
+				$('#mytree').html(res)
+				$('ul ul').css('display','none')			
+			}
+		})
+	}
+	show()
+
+	$(document).on('click','li',function(){
+		pid_html=$(this).html()
+		pid=$(this).attr('value')
+
+		$("#pid").html(pid_html)
+		$("#pid").attr('value',pid)
+		$("#update").attr('value',pid)
+		$("#delete").attr('value',pid)
+
+		var bool=$(this).next().css('display')
+		console.log(bool)
+		if (bool=='none') {
+			$(this).next().css('display','block')
+		}
+		if (bool=='block') {
+			$(this).next().css('display','none')
+		}
+	})	
+	$('#add').click(function() {
+        var name=$('#name').val()
+        var pid=$('#pid').attr('value')
+        if (pid=='') {
+        	var pid=0
+        	$.ajax({
+            url:"{:url('category/addaction')}",
+            data:{
+            	pid:pid,
+                name:name,
+            },
+            type:'post',
+            dataType:'json',
+            success:function(res) {
+            	console.log(res)
+            	if (res.status=='ok') {
+            		alert('添加成功')
+            	}else {
+            		alert('添加失败')
+            	}
+            	show();
+            }
+		})
+        }else{
+        	$.ajax({
+            url:"{:url('category/addaction')}",
+            data:{
+            	pid:pid,
+                name:name,
+            },
+            type:'post',
+            dataType:'json',
+            success:function(res) {
+            	console.log(res)
+            	if (res.status=='ok') {
+            		alert('添加成功')
+            	}else {
+            		alert('添加失败')
+            	}
+            	show();
+            }
+		})
+       }
+        
+    });
+    $(document).on('click','.dalete_one',function(){
+    	var id=$(this).attr('value')
+    	$.ajax({
+    		url:"{:url('category/addaction')}",
+            data:{
+            	id:id,
+            },
+            type:'post',
+            success:function(res) {
+            	console.log(res)
+            	getToken()
+            	if (res.status=='ok') {
+            		show()
+            	}
+            }
+    	}) 
+    })
+    function deleteaction() {
+    	var id=$('#delete').val()
+    	$.ajax({
+            url:"{:url('category/delete')}",
+            data:{
+                id:id,
+            },
+            type:'post',
+            dataType:'json',
+            success:function(res) {
+            	console.log(res)
+            	if (res.status=='ok') {
+            		alert('删除成功');
+            		show();
+            	}
+            	else {
+            		alert('删除失败');
+            	}
+            }
+		})
+ 	show();
+ 	}
+
+
+ 	function update1() {
+ 	var id=$('#update').val()
+	$.ajax({
+            url:"{:url('category/myupdate')}",
+            data:{
+                id:id,
+            },
+            type:'post',
+            dataType:'json',
+            success:function(res) {
+            	console.log(res)
+            	var trr='';
+            	var data=res.data
+            	if (res.status=='ok') {
+            		trr="<input type='hidden' value='"+data[0].id+"' id='update1' >用户名:<input type='text' id='name1' value='"+data[0].name+"'><input type='button' onclick='update2("+data[0].id+")' value='修改'>"
+            	$("#div1").html(trr);
+            	}
+            }
+		})
+}
+function update2() {
+	var id=$('#update1').val()
+	var name=$('#name1').val()
+	$.ajax({
+		url:"{:url('category/updateaction')}",
+		data:{
+			id:id,
+			name:name,
+		},
+		type:'post',
+		dataType:'json',
+		success:function (res) {
+			console.log(res)
+			if (res.status=='ok') {
+				alert(res.data);
+			}else {
+            	alert(res.data);	
+            }
+		}
+	})
+	location.reload(true);
+}
+
+</script>
+</body>
+</html>

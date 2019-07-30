@@ -1,0 +1,260 @@
+{include file="header"}
+<section class="Hui-article-box">
+	<nav class="breadcrumb"><i class="Hui-iconfont">&#xe67f;</i> 首页 <span class="c-gray en">&gt;</span> 产品管理 <span class="c-gray en">&gt;</span> 产品列表<a class="btn btn-success radius r" style="line-height:1.6em;margin-top:3px" href="javascript:location.replace(location.href);" title="刷新" ><i class="Hui-iconfont">&#xe68f;</i></a></nav>
+<h3 style="text-align: center;"><span>热词展示</span></h3>
+<div style="text-align: center;"><span style="font-size: 15px;color: red;" id="zhanshi" ></span></div>
+<div class="page-container">
+  
+	<div class="cl pd-5 bg-1 bk-gray mt-20">
+
+   <span class="l"> <a class="btn btn-primary radius" onClick="product_add()"><i class="Hui-iconfont">&#xe600;</i> 添加产品</a></span> <span class="r"><input type="text" name="" class="input-text" style="width:200px" id="lookup">&nbsp;&nbsp;<input type="button" name="" value="查找" class="btn btn-primary radius" onclick="lookup()"></span> </div>
+
+	<div class="mt-20">
+		<table class="table table-border table-bordered table-bg table-hover table-sort">
+			<thead>
+				<tr class="text-c">
+					<th width="40"><input name="" type="checkbox" value=""></th>
+					<th width="40">ID</th>
+					<th width="100">产品名称</th>
+					<th width="200">品牌</th>
+					<th width="200">分类</th>
+					<th width="100">图片</th>
+          <th width="100">属性</th>
+          <th width="100">货品</th>
+					<th width="100">操作</th>
+				</tr>
+			</thead>
+			<tbody>
+				
+			</tbody>
+		</table>
+	</div>
+</div>
+<!-- add弹出层 -->
+<div id="modal-demo" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content radius">
+            <div class="modal-header">
+                <h3 class="modal-title">产品添加</h3>
+                <a class="close" data-dismiss="modal" aria-hidden="true" href="javascript:void();">×</a>
+            </div>
+            <div class="modal-body">
+                产品名：<input type="text" name="" class="input-text" style="width: 200px;" id="name"><br><br>
+                品牌：<select id="select" style="width: 100px;"></select><br>
+                <br>
+                分类：<select id="selectaction" style="width: 100px;"></select><br>
+                <br>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-primary" id="product_addaction">添加</button>
+                <button class="btn" data-dismiss="modal" aria-hidden="true">关闭</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- update弹出层 -->
+	<div id="modal-update" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+	    <div class="modal-dialog">
+	        <div class="modal-content radius">
+	            <div class="modal-header">
+	                <h3 class="modal-title">产品修改</h3>
+	                <a class="close" data-dismiss="modal" aria-hidden="true" href="javascript:void();">×</a>
+	            </div>
+	            <div class="modal-body">
+	            	id：<input type="text" name="" class="input-text" style="width: 200px;" id="id1" value=""><br><br>
+	                产品名：<input type="text" name="" class="input-text" style="width: 200px;" id="name1" value=""><br><br>
+	                品牌：<select id="select1" style="width: 100px;">
+	                	<option value=""></option>
+	                </select><br>
+	                <br>
+	                分类：<select id="selectaction1" style="width: 100px;">
+	                	<option value=""></option>
+	                </select><br>
+	                <br>
+	            </div>
+	            <div class="modal-footer">
+	                <button class="btn btn-primary" id="product_update1">修改</button>
+	                <button class="btn" data-dismiss="modal" aria-hidden="true">关闭</button>
+	            </div>
+	        </div>
+	    </div>
+	</div>
+</section>
+{include file="footer"}
+<script type="text/javascript">
+	function product_add(){
+		$("#modal-demo").modal("show")
+	}
+	function product_update(id,name,b_name,gc_name) {
+		$('#id1').val(id);
+		$('#name1').val(name);
+		$('#update_select1').val(b_name);
+		$('#update_selectaction1').val(gc_name);
+		brand_show()
+		cate_show()
+		$("#modal-update").modal("show")
+	}
+</script>
+<script type="text/javascript">
+	function show() {
+		var tr=''
+		$.ajax({
+			url:"{:url('product/show')}",
+			dataType:'json',
+			success:function (res) {
+				console.log(res.data)
+				var data=res.data
+              	if (res.status=='ok') {
+	          		for (var i = 0; i < data.length; i++) {
+	          				tr=tr+"<tr class='text-c'><td><input name='' type='checkbox' value=''></td><td>"+data[i].id+"</td><td>"+data[i].name+"</td><td class='text-l'>"+data[i].b_name+"</td><td class='text-l'>"+data[i].gc_name+"</td><td class='text-l'><a style='text-decoration:none'  href='{:url('product/product_img')}?id="+data[i].id+"' title='查看详情'>查看详情&nbsp;<i class='Hui-iconfont'>&#xe613;</i></a></td><td class='text-l'><a style='text-decoration:none'  href='{:url('management/management')}?id="+data[i].id+"' title=''>属性</a></td><td class='text-l'><a style='text-decoration:none'  href='{:url('goods/goods')}?id="+data[i].id+"' title=''>货品</a></td><td class='f-14 product-brand-manage'><a style='text-decoration:none'  onclick='product_update(\""+data[i].id+"\",\""+data[i].name+"\",\""+data[i].gc_name+"\",\""+data[i].b_name+"\")' title='修改'>修改&nbsp;<i class='Hui-iconfont'>&#xe70c;</i></a>&nbsp;&nbsp;||&nbsp;&nbsp;<a style='text-decoration:none' onclick='deleteaction("+data[i].id+")' title='删除'>删除&nbsp;<i class='Hui-iconfont'>&#xe6e2;</i></a></td></tr>";
+	          		}
+	          		$(".table tbody").html(tr);
+              	}					
+			}
+		})
+	}
+	show()
+brand_show()
+function brand_show(id='0') {
+	var option=''
+	var tion=''
+	var op=''
+	$.ajax({
+        url:"{:url('product/brand_show')}",
+        dataType:'json',
+        success:function(res) {
+        	console.log(res)
+          	var data=res.data
+          	if (res.status=='ok') {
+          		if (id!='0') {
+          			for (var i = 0; i < data.length; i++) {
+          			if (id==data[i].id) {
+          				tion="<option value='"+data[i].id+"' selected>"+data[i].name+"</option>"
+          			}else{
+          				option=option+"<option value='"+data[i].id+"'>"+data[i].name+"</option>"
+          			}
+          			op=tion+option;
+          		}
+          	}else{
+          			for (var i = 0; i < data.length; i++) {
+          				option=option+"<option value='"+data[i].id+"'>"+data[i].name+"</option>"
+          			}
+          	}
+          		$("#select").html(option);
+          		$("#select1").html(op);
+          	}
+      	  }
+	});
+};
+cate_show()
+function cate_show(id='0') {
+	var option1=''
+	var tion1=''
+	var op1=''
+	$.ajax({
+        url:"{:url('product/cate_show')}",
+        dataType:'json',
+        success:function(res) {
+        	console.log(res)
+          	var data=res.data
+          	if (res.status=='ok') {
+          		if (id!='0') {
+          			for (var i = 0; i < data.length; i++) {
+          			if (id==data[i].id) {
+          				tion1="<option value='"+data[i].id+"' selected>"+data[i].name+"</option>"
+          			}else{
+          				option1=option1+"<option value='"+data[i].id+"'>"+data[i].name+"</option>"
+          			}
+          			op1=tion1+option1;
+          			console.log(op1)
+          		}
+          	}else{
+          			for (var i = 0; i < data.length; i++) {
+          				option1=option1+"<option value='"+data[i].id+"'>"+data[i].name+"</option>"
+          			}
+          	}
+          		$("#selectaction").html(option1);
+          		$("#selectaction1").html(op1);
+          	}
+      	  }
+	});
+};
+
+	$('#product_addaction').click(function() {
+        var name=$('#name').val()
+        var select=$('#select').val()
+        var selectaction=$('#selectaction').val()
+        // console.log(name)
+        $.ajax({
+            url:"{:url('product/add')}",
+            data:{
+                name:name,
+                select:select,
+                selectaction:selectaction,
+            },
+            type:'post',
+            dataType:'json',
+            success:function(res) {
+            	console.log(res)
+            	if (res.status=='ok') {
+            		alert('添加成功');
+            		show();
+            	}
+            	if (res.status=='error') {
+            		alert(res.data);
+            	}
+            }
+		})
+    });
+    function deleteaction(id) {
+    	$.ajax({
+            url:"{:url('product/deleteaction')}",
+            data:{
+                id:id,
+            },
+            type:'post',
+            dataType:'json',
+            success:function(res) {
+            		console.log(res)
+            	if (res.status=='ok') {
+            		alert('删除成功');
+            		show();
+            	}
+            	if (res.status=='error') {
+            		alert(res.data);
+            	}
+    		}
+		})
+    }
+    function lookup() {
+      var lookup=$('#lookup').val()
+      $.ajax({
+            url:"{:url('product/lookup')}",
+            data:{
+                lookup:lookup,
+            },
+            type:'post',
+            dataType:'json',
+            success:function(res) {
+              var tr=''
+              var div=''
+              console.log(res)
+              var data=res.data
+              var name=res.aa
+                  for (var i = 0; i < data.length; i++) {
+                    tr=tr+"<tr class='text-c'><td><input name='' type='checkbox' value=''></td><td>"+data[i].id+"</td><td>"+data[i].name+"</td><td class='text-l'>"+data[i].b_name+"</td><td class='text-l'>"+data[i].gc_name+"</td><td class='text-l'><a style='text-decoration:none'  href='{:url('product/product_img')}?id="+data[i].id+"' title='查看详情'>查看详情&nbsp;<i class='Hui-iconfont'>&#xe613;</i></a></td><td class='text-l'><a style='text-decoration:none'  href='{:url('management/management')}?id="+data[i].id+"' title=''>属性</a></td><td class='text-l'><a style='text-decoration:none'  href='{:url('goods/goods')}?id="+data[i].id+"' title=''>货品</a></td><td class='f-14 product-brand-manage'><a style='text-decoration:none'  onclick='product_update(\""+data[i].id+"\",\""+data[i].name+"\",\""+data[i].gc_name+"\",\""+data[i].b_name+"\")' title='修改'>修改&nbsp;<i class='Hui-iconfont'>&#xe70c;</i></a>&nbsp;&nbsp;||&nbsp;&nbsp;<a style='text-decoration:none' onclick='deleteaction("+data[i].id+")' title='删除'>删除&nbsp;<i class='Hui-iconfont'>&#xe6e2;</i></a></td></tr>";
+                }
+                $(".table tbody").html(tr);
+
+                for (var i = 0; i < name.length; i++) {
+                  div=div+"<span>"+name[i]+"</span>&nbsp;&nbsp;&nbsp;&nbsp;";
+                }
+                $("#zhanshi").html(div);
+            }
+        })
+      }
+
+</script>
+</body>
+</html>

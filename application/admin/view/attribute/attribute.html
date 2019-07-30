@@ -1,0 +1,129 @@
+{include file="header"}
+	<section class="Hui-article-box">
+	<nav class="breadcrumb"><i class="Hui-iconfont">&#xe67f;</i> 首页 <span class="c-gray en">&gt;</span>属性<span class="c-gray en">&gt;</span>属性<a class="btn btn-success radius r" style="line-height:1.6em;margin-top:3px" href="javascript:location.replace(location.href);" title="刷新" ><i class="Hui-iconfont">&#xe68f;</i></a></nav>
+<div class="page-container">
+	<div class="cl pd-5 bg-1 bk-gray mt-20"> <span class="l">
+		<select class="input-text" style="width: 200px;" id="select">
+			
+		</select>
+		<input type="text" name="" id="attribute_name" class="input-text" style="width: 200px;">
+		<a class="btn btn-primary radius" onclick="attribute_add()"><i class="Hui-iconfont">&#xe600;</i> 添加产品</a></span> <span class="r">
+</span> </div>
+	<div class="mt-20">
+		<table class="table table-border table-bordered table-bg table-hover table-sort">
+			<thead>
+				<tr class="text-c">
+					<th width="40"><input name="" type="checkbox" value=""></th>
+					<th width="40">ID</th>
+					<th width="200">属性</th>
+					<th width="200">分类</th>
+					<th width="100">操作</th>
+				</tr>
+			</thead>
+			<tbody>
+				
+			</tbody>
+		</table>
+	</div>
+</div>
+<!-- update弹出层 -->
+<div id="modal-demo" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content radius">
+            <div class="modal-header">
+                <h3 class="modal-title">产品添加</h3>
+                <a class="close" data-dismiss="modal" aria-hidden="true" href="javascript:void();">×</a>
+            </div>
+            <div class="modal-body">
+                产品：<input type="text" name="" class="input-text" style="width: 200px;" id="name"><br><br> 
+                id：<input type="text" name="" class="input-text" style="width: 200px;" id="id"><br><br>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-primary" id="attribute_addaction">添加</button>
+                <button class="btn" data-dismiss="modal" aria-hidden="true">关闭</button>
+            </div>
+        </div>
+    </div>
+</div>
+</section>
+{include file="footer"}
+<script type="text/javascript">
+	//添加select展示
+	function attribute_option() {
+		var option='<option value="0">请选择</option>'
+		$.ajax({
+			//这里 调用分类的展示方法！
+			url:"{:url('attribute/category_show')}",
+			dataType:'json',
+			success:function (res) {
+				console.log(res.data)
+				var data=res.data
+              	if (res.status=='ok') {
+	          		for (var i = 0; i < data.length; i++) {
+	          			option=option+"<option value='"+data[i].id+"'>"+data[i].name+"</option>";
+	          		}
+	          		$("#select").html(option);
+              	}					
+			}
+		})
+	}
+	attribute_option()
+	//展示
+	attribute_show()
+	function attribute_show() {
+		var tr='';
+		$.ajax({
+			url:"{:url('attribute/attribute_show')}",
+			dataType:'json',
+			success:function(res){
+				console.log(res)
+				var data=res.data
+				for (var i=0; i<data.length; i++) {
+					tr=tr+"<tr class='text-c'><td><input name='' type='checkbox' value=''></td><td>"+data[i].at_id+"</td><td>"+data[i].name+"</td><td>"+data[i].at_name+"</td><td class='f-14 product-brand-manage'><a style='text-decoration:none'  onclick='attribute_update(\""+data[i].at_id+"\",\""+data[i].at_name+"\")' title='修改'>修改&nbsp;<i class='Hui-iconfont'>&#xe70c;</i></a>&nbsp;&nbsp;||&nbsp;&nbsp;<a style='text-decoration:none' onclick='attribute_delete("+data[i].at_id+")' title='删除'>删除&nbsp;<i class='Hui-iconfont'>&#xe6e2;</i></a></td></tr>";
+				}
+				$(".table tbody").html(tr);
+			}
+		})
+	}
+	//添加
+	function attribute_add() {
+		var id=$("#select").val()
+		var name=$("#attribute_name").val()
+		$.ajax({
+			//这里category_show 调用分类的展示方法！
+			url:"{:url('attribute/attribute_add')}",
+			data:{
+				id:id,
+				name:name,
+			},
+			type:"post",
+			dataType:'json',
+			success:function (res) {
+				console.log(res.data)
+              	if (res.status=='ok') {
+              		alert(res.data)
+              		attribute_show()
+              	}else{
+              		alert(res.data)
+              	}			
+			}
+		})
+	}
+	//删除
+	function attribute_delete(id) {
+		$.ajax({
+			url:"{:url('attribute/attribute_deleteaction')}",
+			data:{
+				id:id,
+			},
+			type:'post',
+			dataType:'json',
+			success:function(res){
+				console.log(res)
+				alert(res.data)
+				attribute_show()
+			}
+		})
+	}
+
+</script>

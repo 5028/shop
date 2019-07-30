@@ -1,0 +1,122 @@
+{include file="header"}
+	<section class="Hui-article-box">
+	<nav class="breadcrumb"><i class="Hui-iconfont">&#xe67f;</i> 首页 <span class="c-gray en">&gt;</span>产品<span class="c-gray en">&gt;</span>货物<a class="btn btn-success radius r" style="line-height:1.6em;margin-top:3px" href="javascript:location.replace(location.href);" title="刷新" ><i class="Hui-iconfont">&#xe68f;</i></a></nav>
+<div class="page-container">
+
+	商品：<select class="input-text" style="width: 200px;" id="select" onchange="onchange_show()">
+	</select> 
+	<input type="hidden" name="" id="id" value="{$id}">
+
+	<button class="input-text" style="width: 100px;" onclick="addaction()">添加</button>
+	<div class="mt-20">
+		<table class="table table-border table-bordered table-bg table-hover table-sort">
+			<tbody>
+				
+			</tbody>
+		</table>
+	</div>
+</div>
+<!-- update弹出层 -->
+<!-- <div id="modal-demo" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content radius">
+            <div class="modal-header">
+                <h3 class="modal-title">产品添加</h3>
+                <a class="close" data-dismiss="modal" aria-hidden="true" href="javascript:void();">×</a>
+            </div>
+            <div class="modal-body">
+                产品：<input type="text" name="" class="input-text" style="width: 200px;" id="name"><br><br> 
+                id：<input type="text" name="" class="input-text" style="width: 200px;" id="id"><br><br>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-primary" id="attribute_addaction">添加</button>
+                <button class="btn" data-dismiss="modal" aria-hidden="true">关闭</button>
+            </div>
+        </div>
+    </div>
+</div> -->
+</section>
+{include file="footer"}
+<script type="text/javascript">
+
+	select_show()
+	function select_show() {
+		var id={$id}
+
+		var attr_cate={$attr_cate}
+
+		$.ajax({
+			url:"{:url('management/show1')}",
+			
+			dataType:'json',
+			success:function (res) {
+				console.log(res.data)
+				var data=res.data
+				var option=''
+              	if (res.status=='ok') {
+	          		for (var i = 0; i < data.length; i++) {
+	          			if (data[i].id==attr_cate) {
+	          				option=option+"<option value='"+data[i].id+"' selected>"+data[i].name+"</option>";
+	          			}else{
+	          				option=option+"<option value='"+data[i].id+"'>"+data[i].name+"</option>";
+	          			}
+	          		}
+	          		$("#select").html(option);
+	          		onchange_show()
+              	}					
+			}
+		})
+	}
+	function onchange_show() {
+		var id=$("#select").val()
+		$.ajax({
+			url:"{:url('management/show2')}",
+			data:{
+				id:id,
+			},
+			type:"post",
+			dataType:'json',
+			success:function (res) {
+				console.log(res.data)
+				var data=res.data
+				var ret=''
+				var $arr=[]
+				if (res.status=='ok') {
+	              	$.each(data,function(key,value){
+						ret=ret+"<dt><label><input type='checkbox' value='' name='test' class='mycheckbox'><b>"+key+"</b></label></dt></br><dd>";
+							$.each(value,function (key1,value1) {
+								ret=ret+"<label class=''>&nbsp;&nbsp;<input class='mycheckbox' type='checkbox' name='test' id='"+value1['atde_id']+"' value='"+value1['id']+"-"+value1['atde_id']+"' >"+value1['atde_name']+"</label>&nbsp;";
+							})
+							ret=ret+"</dd>"
+					})
+					 $(".table tbody").html(ret);
+				}
+			}
+		})
+	}
+	function addaction(){
+		var id={$id};
+
+		var sel=$('#sel').val();
+		var box=$('.mycheckbox:checked')
+	  	var pemid=''
+		for (var i = 0; i < box.length; i++) {
+	    pemid=pemid+','+box[i].value
+        } 
+        $.ajax({
+		url:"{:url('management/add')}",
+		data:{
+			sel:sel,
+			id:id,
+			pemid:pemid
+		},
+		type:'post',
+		dataType:'json',
+			success:function(res){
+				console.log(res)
+				alert(res.data)
+			}
+        })
+	}
+	
+</script>

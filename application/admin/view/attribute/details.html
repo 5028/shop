@@ -1,0 +1,160 @@
+{include file="header"}
+	<section class="Hui-article-box">
+	<nav class="breadcrumb"><i class="Hui-iconfont">&#xe67f;</i> 首页 <span class="c-gray en">&gt;</span>属性<span class="c-gray en">&gt;</span>详情<a class="btn btn-success radius r" style="line-height:1.6em;margin-top:3px" href="javascript:location.replace(location.href);" title="刷新" ><i class="Hui-iconfont">&#xe68f;</i></a></nav>
+<div class="page-container">
+
+	<div class="cl pd-5 bg-1 bk-gray mt-20" > <span class="l">
+	<select class="input-text" style="width: 200px;" id="select" onchange='onchange_show()'>
+	</select>
+	<select class="input-text" style="width: 200px;" id="select1">
+	</select>
+	<input type="text" name="" id="details_name" class="input-text" style="width: 200px;">
+	<button id="button" class="input-text" style="width: 100px;" value="添加" onclick="details_add()">添加</button>
+	</span></div>
+	
+	<div class="mt-20">
+		<table class="table table-border table-bordered table-bg table-hover table-sort">
+			<thead>
+				<tr class="text-c">
+					<th width="40"><input name="" type="checkbox" value=""></th>
+					<th width="70">ID</th>
+					<th width="200">产品名称</th>
+					<th width="200">属性</th>
+					<th width="200">分类</th>
+					<th width="100">操作</th>
+				</tr>
+			</thead>
+			<tbody>
+				
+			</tbody>
+		</table>
+	</div>
+</div>
+<!-- update弹出层 -->
+<div id="modal-demo" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content radius">
+            <div class="modal-header">
+                <h3 class="modal-title">产品添加</h3>
+                <a class="close" data-dismiss="modal" aria-hidden="true" href="javascript:void();">×</a>
+            </div>
+            <div class="modal-body">
+                产品：<input type="text" name="" class="input-text" style="width: 200px;" id="name"><br><br> 
+                id：<input type="text" name="" class="input-text" style="width: 200px;" id="id"><br><br>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-primary" id="attribute_addaction">添加</button>
+                <button class="btn" data-dismiss="modal" aria-hidden="true">关闭</button>
+            </div>
+        </div>
+    </div>
+</div>
+</section>
+{include file="footer"}
+<script type="text/javascript">
+	//添加select展示
+	function onchange_show() {
+		var id=$("#select").val()
+		var option='<option value="0">请选择</option>';
+		$.ajax({
+			//这里attribute_show_select 调用分类的展示方法！
+			url:"{:url('attribute/attribute_show_select')}",
+			data:{
+				id:id,
+			},
+			type:"post",
+			dataType:'json',
+			success:function (res) {
+				console.log(res.data)
+				var data=res.data
+              	if (res.status=='ok') {
+	          		for (var i = 0; i < data.length; i++) {
+	          			option=option+"<option value='"+data[i].id+"' >"+data[i].name+"</option>";
+	          		}
+	          		$("#select1").html(option);
+	          		//$("#select1").html(option);
+              	}else{
+              		alert(res.data)
+              	}				
+			}
+		})
+	}
+
+	function details_option() {
+		var option='<option value="0">请选择</option>';
+		$.ajax({
+			//这里category_show 调用分类的展示方法！
+			url:"{:url('attribute/category_show')}",
+			dataType:'json',
+			success:function (res) {
+				console.log(res.data)
+				var data=res.data
+              	if (res.status=='ok') {
+	          		for (var i = 0; i < data.length; i++) {
+	          			option=option+"<option value='"+data[i].id+"' >"+data[i].name+"</option>";
+	          		}
+	          		$("#select").html(option);
+              	}					
+			}
+		})
+	}
+	details_option()
+	//添加
+	function details_add() {
+		var id=$("#select").val()
+		var id1=$("#select1").val()
+		var name=$("#details_name").val()
+		$.ajax({
+			url:"{:url('attribute/details_add')}",
+			data:{
+				id:id,
+				id1:id1,
+				name:name,
+			},
+			type:"post",
+			dataType:'json',
+			success:function (res) {
+				console.log(res.data)
+              	if (res.status=='ok') {
+              		alert(res.data)
+              		details_show()
+              	}else{
+              		alert(res.data)
+              	}			
+			}
+		})
+	}
+	//展示
+	details_show()
+	function details_show() {
+		var tr='';
+		$.ajax({
+			url:"{:url('attribute/details_show')}",
+			dataType:'json',
+			success:function(res){
+				console.log(res)
+				var data=res.data
+				for (var i=0; i<data.length; i++) {
+					tr=tr+"<tr class='text-c'><td><input name='' type='checkbox' value=''></td><td>"+data[i].id+"</td><td>"+data[i].name+"</td><td>"+data[i].attr_name+"</td><td>"+data[i].cate_name+"</td><td class='f-14 product-brand-manage'><a style='text-decoration:none'  onclick='details_update(\""+data[i].id+"\",\""+data[i].name+"\")' title='修改'>修改&nbsp;<i class='Hui-iconfont'>&#xe70c;</i></a>&nbsp;&nbsp;||&nbsp;&nbsp;<a style='text-decoration:none' onclick='details_deleteaction("+data[i].id+")' title='删除'>删除&nbsp;<i class='Hui-iconfont'>&#xe6e2;</i></a></td></tr>";
+				}
+				$(".table tbody").html(tr);
+			}
+		})
+	}
+	//删除
+	function details_deleteaction(id) {
+		$.ajax({
+			url:"{:url('attribute/details_deleteaction')}",
+			data:{
+				id:id,
+			},
+			type:'post',
+			dataType:'json',
+			success:function(res){
+				console.log(res)
+				alert(res.data)
+				details_show()
+			}
+		})
+	}
+</script>

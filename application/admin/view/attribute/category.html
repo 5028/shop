@@ -1,0 +1,131 @@
+{include file="header"}
+	<section class="Hui-article-box">
+	<nav class="breadcrumb"><i class="Hui-iconfont">&#xe67f;</i> 首页 <span class="c-gray en">&gt;</span>属性<span class="c-gray en">&gt;</span>类别<a class="btn btn-success radius r" style="line-height:1.6em;margin-top:3px" href="javascript:location.replace(location.href);" title="刷新" ><i class="Hui-iconfont">&#xe68f;</i></a></nav>
+<div class="page-container">
+	<div class="cl pd-5 bg-1 bk-gray mt-20" > <span class="l">
+	<div style="text-align: center;"></div>
+
+	<input type="text" name="" id="category_name" class="input-text" style="width: 200px;">
+	<a class="btn btn-primary radius" onclick="category_add()"><i class="Hui-iconfont">&#xe600;</i> 添加产品</a></span></div>
+	<div class="mt-20">
+		<table class="table table-border table-bordered table-bg table-hover table-sort">
+			<thead>
+				<tr class="text-c">
+					<th width="40"><input name="" type="checkbox" value=""></th>
+					<th width="70">ID</th>
+					<th width="200">分类名称</th>
+					<th width="100">操作</th>
+				</tr>
+			</thead>
+			<tbody>
+				
+			</tbody>
+		</table>
+	</div>
+</div>
+<!-- 修改弹窗 -->
+<div id="modal-demo" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content radius">
+            <div class="modal-header">
+                <h3 class="modal-title">产品添加</h3>
+                <a class="close" data-dismiss="modal" aria-hidden="true" href="javascript:void();">×</a>
+            </div>
+            <div class="modal-body">
+            	分类：<input type="text" name="" class="input-text" style="width: 200px;" id="cat_name"><br><br>
+            		<input type="hidden" name="" class="input-text" style="width: 200px;" id="cat_id"><br><br>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-primary" id="category_updateaction" onclick="category_updateaction()">修改</button>
+                <button class="btn" data-dismiss="modal" aria-hidden="true">关闭</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+</section>
+{include file="footer"}
+<script type="text/javascript">
+	//分类的展示
+	function category_show() {
+		var tr='';
+		$.ajax({
+			url:"{:url('attribute/category_show')}",
+			dataType:'json',
+			success:function(res){
+				console.log(res)
+				var data=res.data
+				for (var i=0; i<data.length; i++) {
+					tr=tr+"<tr class='text-c'><td><input name='' type='checkbox' value=''></td><td>"+data[i].id+"</td><td>"+data[i].name+"</td><td class='f-14 product-brand-manage'><a style='text-decoration:none'  onclick='category_update(\""+data[i].id+"\",\""+data[i].name+"\")' title='修改'>修改&nbsp;<i class='Hui-iconfont'>&#xe70c;</i></a>&nbsp;&nbsp;||&nbsp;&nbsp;<a style='text-decoration:none' onclick='category_delete("+data[i].id+")' title='删除'>删除&nbsp;<i class='Hui-iconfont'>&#xe6e2;</i></a></td></tr>";
+				}
+				$(".table tbody").html(tr);
+			}
+		})
+	}
+	category_show()
+	//分类的添加
+	function category_add() {
+		var name=$("#category_name").val()
+		$.ajax({
+			url:"{:url('attribute/category_add')}",
+			data:{
+				name:name,
+			},
+			type:'post',
+			dataType:'json',
+			success:function(res){
+				console.log(res)
+				if (res.code=='10001') {
+					category_show()
+					alert(res.data)
+				}else{
+					alert(res.data)
+				}
+			}
+		})
+	}
+	//分类的删除
+		function category_delete(id) {
+		$.ajax({
+			url:"{:url('attribute/category_delete')}",
+			data:{
+				id:id,
+			},
+			type:'post',
+			dataType:'json',
+			success:function(res){
+				console.log(res)
+				alert(res.data)
+				category_show()
+			}
+		})
+	}
+	//分类的修改
+	function category_update(id,name){
+		$("#cat_id").val(id)
+		$("#cat_name").val(name)
+		$("#modal-demo").modal("show")
+	}
+	function category_updateaction() {
+		var id=$("#cat_id").val()
+		var name=$("#cat_name").val()
+		$.ajax({
+			url:"{:url('attribute/category_updateaction')}",
+			data:{
+				id:id,
+				name:name,
+			},
+			type:'post',
+			dataType:'json',
+			success:function(res){
+				console.log(res)
+				if (res.code=='10001') {
+					category_show()
+					alert(res.data)
+				}else{
+					alert(res.data)
+				}
+			}
+		})
+	}
+</script>

@@ -1,0 +1,115 @@
+  <!--_meta 作为公共模版分离出去-->
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="renderer" content="webkit|ie-comp|ie-stand">
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+<LINK rel="Bookmark" href="/favicon.ico" >
+<LINK rel="Shortcut Icon" href="/favicon.ico" />
+<link rel="stylesheet" type="text/css" href="__STATIC__/h-ui/css/H-ui.min.css" />
+<link rel="stylesheet" type="text/css" href="__STATIC__/h-ui/css/H-ui.admin.css" />
+<link rel="stylesheet" type="text/css" href="__STATIC__/lib/Hui-iconfont/1.0.7/iconfont.css" />
+<link rel="stylesheet" type="text/css" href="__STATIC__/lib/icheck/icheck.css" />
+<link rel="stylesheet" type="text/css" href="__STATIC__/h-ui/skin/default/skin.css" id="skin" />
+<link rel="stylesheet" type="text/css" href="__STATIC__/h-ui/css/style.css" />
+
+<title>新建网站角色 - 管理员管理 - H-ui.admin v2.3</title>
+<meta name="keywords" content="H-ui.admin v2.3,H-ui网站后台模版,后台模版下载,后台管理系统模版,HTML后台模版下载">
+<meta name="description" content="H-ui.admin v2.3，是一款由国人开发的轻量级扁平化网站后台模板，完全免费开源的网站后台管理系统模版，适合中小型CMS后台系统。">
+</head>
+<body>
+	
+<article class="page-container">
+	<form action="" method="post" class="form form-horizontal" id="form-admin-role-add">
+		<div class="row cl">
+			<label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>角色名称：</label>
+			<div class="formControls col-xs-8 col-sm-9">
+				<input type="text" style="width: 300px" class="input-text" value="{$data[0]['id']}" placeholder="" id="roleName" name="roleName" datatype="*4-16" nullmsg="用户账户不能为空">
+			</div>
+
+		</div>
+		<div class="row cl">
+			<label class="form-label col-xs-4 col-sm-3">备注：</label>
+			<div class="formControls col-xs-8 col-sm-9">
+				<input type="text" style="width: 300px" class="input-text" value="" placeholder="" id="role_description" name="">
+			</div>
+		</div>
+		<div class="row cl">
+			<label class="form-label col-xs-4 col-sm-3">网站角色：</label>
+			<div class="formControls col-xs-8 col-sm-9">
+				<dl class="permission-list">
+					<dd>
+						<dl class="cl permission-list2" id="role_list">
+						</dl>
+					</dd>
+				</dl>
+			</div>
+		</div>
+		<div class="row cl">
+			<div class="col-xs-8 col-sm-9 col-xs-offset-4 col-sm-offset-3">
+				<button type="submit" class="btn btn-success radius" id="add" name="admin-role-save"><i class="icon-ok"></i> 确定</button>
+			</div>
+		</div>
+	</form>
+</article>
+<!--_footer 作为公共模版分离出去-->
+<script type="text/javascript" src="__STATIC__/lib/jquery/1.9.1/jquery.min.js"></script> 
+<script type="text/javascript" src="__STATIC__/lib/layer/2.1/layer.js"></script> 
+<script type="text/javascript" src="__STATIC__/lib/icheck/jquery.icheck.min.js"></script> 
+<script type="text/javascript" src="__STATIC__/h-ui/js/H-ui.js"></script> 
+<script type="text/javascript" src="__STATIC__/h-ui/js/H-ui.admin.js"></script>
+<script type="text/javascript">
+	role_add()
+	function role_add() {
+		$.ajax({
+			url:"{:url('role/add')}",
+			dataType:"json",
+			success:function(res){
+				console.log(res)
+				var data=res.data
+				var ret='';
+				$.each(data,function(key,value){
+					ret=ret+"<dt><label><input type='checkbox' value='' id='role_permission'><b>"+key+"</b></label></dt><dd>";
+						$.each(value,function (key1,value1) {
+							ret=ret+"<label class=''>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type='checkbox' id='role_permissioncate' value='"+value1[1]+"'>"+value1[0]+"</label>&nbsp;&nbsp;&nbsp;";
+						})
+						ret=ret+"</dd>"
+				})
+				$("#role_list").html(ret)
+			}
+		})
+	}
+	$("#add").click(function () {
+        var box=$(":checkbox:checked")
+        var name=$('#roleName').val()
+        var description=$('#role_description').val()
+        var id='';
+        for (var i=0; i<box.length; i++){
+            id=id+','+box[i].value
+        }
+        console.log(id)
+        $.ajax({
+            url:"{:url('role/addaction')}",
+            data:{
+                name:name,
+                description:description,
+                id:id
+            },
+            type:"post",
+            dataType: "json",
+            success:function (res) {
+                if(res.code==0){
+                    alert(res.data)
+                }else {
+                    alert(res.data)
+                }
+            }
+        })
+    })
+</script>
+
+</body>
+</html>

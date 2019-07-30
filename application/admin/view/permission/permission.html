@@ -1,0 +1,238 @@
+{include file="header"}
+
+<section class="Hui-article-box">
+   <nav class="breadcrumb"><i class="Hui-iconfont">&#xe67f;</i> 首页 <span class="c-gray en">&gt;</span> 管理员管理 <span class="c-gray en">&gt;</span> 权限管理 <a class="btn btn-success radius r" style="line-height:1.6em;margin-top:3px" href="javascript:location.replace(location.href);" title="刷新" ><i class="Hui-iconfont">&#xe68f;</i></a></nav>
+  <div class="Hui-article">
+    <article class="cl pd-20">
+      <div class="text-c">
+        <input type="text" class="input-text" style="width:150px" placeholder="name" id="qx">
+        <select id="cate" style="width:150px" class="input-text"></select>
+        <input type="text" class="input-text" style="width:150px" placeholder="path" id="path">
+        <input type="text" class="input-text" style="width:150px" placeholder="描述" id="description">
+        <button type="submit" class="btn btn-success radius" id="admin-role-save"><i class="icon-ok"></i>添加权限节点</button>
+      </div>
+      <br>
+      <br>
+      <table class="table table-border table-bordered table-bg">
+        <thead>
+          <tr>
+            <th scope="col" colspan="7" style="color: red;font-size: 17px;text-align: center;">权限节点</th>
+          </tr>
+          <tr class="text-c">
+            <th width="25"><input type="checkbox" name="" value=""></th>
+            <th width="40">ID</th>
+            <th width="100">名称:name</th>
+            <th width="200">分类id：category_id</th>
+            <th width="200">路径：path</th>
+            <th>描述：description</th>
+            <th width="100">操作</th>
+          </tr>
+        </thead>
+        <tbody>
+
+        </tbody>
+      </table>
+    </article>
+  </div>
+</section>
+
+
+
+<nav class="breadcrumb"><i class="Hui-iconfont">&#xe67f;</i> 首页 <span class="c-gray en">&gt;</span> 管理员管理 <span class="c-gray en">&gt;</span> 权限管理 <a class="btn btn-success radius r" style="line-height:1.6em;margin-top:3px" href="javascript:location.replace(location.href);" title="刷新" onclick="show()"><i class="Hui-iconfont">&#xe68f;</i></a></nav>
+<div class="page-container">
+	<div class="text-c">
+		<div class="form form-horizontal" id="form-admin-role-add">
+		<div class="row cl">
+			<div class="formControls col-xs-8 col-sm-9">
+				<input type="text" class="input-text" style="width:150px" placeholder="name" id="qx">
+				<select id="cate" style="width:150px" class="input-text"></select>
+				<input type="text" class="input-text" style="width:150px" placeholder="path" id="path">
+				<input type="text" class="input-text" style="width:150px" placeholder="描述" id="description">
+				<button type="submit" class="btn btn-success radius" id="admin-role-save"><i class="icon-ok"></i>添加权限节点</button>
+			</div>
+
+		</div>
+	</div>
+	</div>
+	<div class="cl pd-5 bg-1 bk-gray mt-20"> <span class="l"><a href="javascript:;" onclick="datadel()" class="btn btn-danger radius"><i class="Hui-iconfont">&#xe6e2;</i> 批量删除</a> 
+	</span> <span class="r">共有数据：<strong>???</strong> 条</span> </div>
+	<table class="table table-border table-bordered table-bg">
+		<thead>
+			<tr class="text-c">
+				<th width="25"><input type="checkbox" name="" value=""></th>
+				<th width="40">ID</th>
+				<th width="100">名称:name</th>
+				<th width="200">分类id：category_id</th>
+				<th width="200">路径：path</th>
+				<th>描述：description</th>
+				<th width="100">操作</th>
+			</tr>
+		</thead>
+		<tbody>
+
+		</tbody>
+	</table>
+</div>
+
+<div id="div1" style="text-align: center;">
+	
+</div>
+{include file="footer"}
+
+<script type="text/javascript">
+cate()
+show()
+function cate(id='0') {
+	var option='';
+	var tion='';
+	var op=''
+	console.log(id)
+	$.ajax({
+        url:"{:url('permission/cate')}",
+        dataType:'json',
+        success:function(res) {
+        	console.log(res)
+          	var data=res.data
+          	if (res.status=='ok') {
+          		if (id!='0') {
+          			for (var i = 0; i < data.length; i++) {
+          			if (id==data[i].id) {
+          				tion="<option value='"+data[i].id+"' selected>"+data[i].name+"</option>"
+          			}else{
+          				option=option+"<option value='"+data[i].id+"'>"+data[i].name+"</option>"
+          			}
+          			op=tion+option;
+          		}
+          	}else{
+          			for (var i = 0; i < data.length; i++) {
+          				option=option+"<option value='"+data[i].id+"'>"+data[i].name+"</option>"
+          			}
+          	}
+          		
+          		$("#cate").html(option);
+          		$("#cate2").html(op);
+          	}
+      	  }
+	});
+};
+
+function show() {
+	var tr='';
+	$.ajax({
+        url:"{:url('permission/show')}",
+        dataType:'json',
+        success:function(res) {
+        	console.log(res)
+          	var data=res.data
+          	if (res.status=='ok') {
+          		for (var i = 0; i < data.length; i++) {
+          			tr=tr+"<tr class='text-c'><td><input name='' type='checkbox' value=''></td><td>"+data[i].id+"</td><td><img src=''>"+data[i].name+"</td><td>"+data[i].p_c_name+"</td><td>"+data[i].path+"</td><td class='text-l'><img src=''>"+data[i].description+"</td><td class='f-14 product-brand-manage'><a style='text-decoration:none' onclick='update1("+data[i].id+")' title='编辑'>编辑<i class='Hui-iconfont'>&#xe6df;</i></a> <a style='text-decoration:none' onclick='mydelete("+data[i].id+")' title='删除'>删除<i class='Hui-iconfont'>&#xe6e2;</i></a></td></tr>";
+          		}
+          		$(".table tbody").html(tr);
+
+          	}
+      	  }
+	});
+};
+
+$('#admin-role-save').click(function() {
+    var name=$('#qx').val()
+    var category_id=$('#cate').val()
+    var path=$('#path').val()
+    var description=$('#description').val()
+    $.ajax({
+        url:"{:url('permission/addaction')}",
+        data:{
+            name:name,
+            category_id:category_id,
+            path:path,
+            description:description
+        },
+        type:'post',
+        dataType:'json',
+        success:function(res) {
+        	console.log(res)
+        	if (res.status=='ok') {
+        		alert('添加成功');
+        		show();
+        	}
+        	if (res.status=='error') {
+        		alert(res.data);
+        	}
+        }
+	})
+});
+
+function mydelete(id) {
+ 	console.log('id');
+ 	$.ajax({
+            url:"{:url('permission/delete')}",
+            data:{
+                id:id,
+            },
+            type:'post',
+            dataType:'json',
+            success:function(res) {
+            	console.log(res)
+            	if (res.status=='ok') {
+            		alert('删除成功');
+            		show();
+            	}
+            	else {
+            		alert('删除失败');
+            	}
+            }
+		})
+ 	show();
+ }
+
+function update1(id) {
+	$.ajax({
+            url:"{:url('permission/myupdate')}",
+            data:{
+                id:id,
+            },
+            type:'post',
+            dataType:'json',
+            success:function(res) {
+            	var trr='';
+            	var data=res.data
+            	if (res.status=='ok') {
+            		trr="<input type='hidden' value='"+data[0].id+"' id='id2' class='input-text' style='width:150px'></br></br>                                                        用户名:<input type='text' id='name2' value='"+data[0].name+"' class='input-text' style='width:150px'></br></br>                                                           分类:<select id='cate2' value='"+data[0].name+"' style='width:150px' class='input-text'></select></br></br>                                         路径:<input type='text' id='path2' value='"+data[0].path+"' class='input-text' style='width:250px'></br></br>                                                          备注:<input type='text' id='description2' value='"+data[0].description+"' class='input-text' style='width:150px'></br></br><input type='button' onclick='update2("+data[0].id+")' value='确认修改' class='input-text' style='width:150px'>"
+            	$("#div1").html(trr);
+            	cate(data[0].category_id)
+            	}
+            }
+		})
+}
+function update2(id) {
+	var name=$('#name2').val()
+  var category_id=$('#cate2').val()
+  var path=$('#path2').val()
+  var description=$('#description2').val() 
+	$.ajax({
+		url:"{:url('permission/updateaction')}",
+		data:{
+			id:id,
+			name:name,
+			path:path,
+			category_id:category_id,
+			description:description,
+		},
+		type:'post',
+		dataType:'json',
+		success:function (res) {
+			console.log(res)
+			if (res.status=='ok') {
+				alert(res.data);
+			}else {
+            	alert(res.data);
+            }
+		}
+	})
+	location.reload(true);
+}
+
+</script>
+</body>
+</html>
